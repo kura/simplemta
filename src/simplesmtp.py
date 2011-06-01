@@ -76,7 +76,7 @@ def main():
         sys.exit(0)
 
 if __name__ == "__main__":
-    d = Daemon("/tmp/ayers-smtpd.pid")
+    d = Daemon("/tmp/simplesmtpd.pid")
     if sys.argv[1] == "start":
         print "Starting SimpleSMTPD..."
         d.start()
