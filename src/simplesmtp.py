@@ -1,8 +1,20 @@
 #!/usr/bin/python
+
 import sys
 import eventlet
 import socket
+import random
 from daemon import Daemon
+
+
+__author__ = "Kura"
+__copyright__ = "None"
+__credits__ = ["Kura"]
+__license__ = "BSD 3-Clause"
+__version__ = "0.1"
+__maintainer__ = "Kura"
+__email__ = "kura@deviling.net"
+__status__ = "Development"
 
 
 #
@@ -14,6 +26,12 @@ from daemon import Daemon
 # for processing.
 #
 
+HOST = "0.0.0.0"
+PORT = 25
+CONCURRENCY = 10000
+ALWAYS_ACCEPT = False
+ALWAYS_BOUNCE = False
+ALWAYS_RANDOM = True
 
 RESPONSES = {
     "220": "220 SimpleSMTP ready and waiting baby!\n",
@@ -34,9 +52,8 @@ RESPONSES = {
     '554': "554 transaction failed\n",
 }
 
-HOST = "0.0.0.0"
-PORT = 25
-CONCURRENCY = 10000
+RANDOM_RESPONSES = ('250', '421', '450', '550', '551', '552', '553', '554')
+BOUNCE_RESPONSES = ('421', '450', '550', '551', '552', '553', '554')
 
 def handle(sock, addr):
     fd = sock.makefile('rw')
@@ -54,7 +71,7 @@ def handle(sock, addr):
             fd.write(RESPONSES['250'])
         elif line.startswith("DATA"):
             handle_data(fd)
-            fd.write(RESPONSES['250'])
+            handle_complete(fd)
         elif line.startswith("RSET"):
             fd.write(RESPONSES['250'])
         elif line.startswith("QUIT"):
@@ -73,6 +90,21 @@ def handle_data(fd):
             return
         else:
             fd.write(line)
+
+def handle_complete(fd):
+    if ALWAYS_ACCEPT is True:
+        fd.write(RESPONSES['250'])
+    elif ALWAYS_BOUNCE is True:
+        rand = random.randrange(0, len(BOUNCE_RESPONSES))
+        resp = BOUNCE_RESPONSES[rand]
+        fd.write(RESPONSES[resp])
+    elif ALWAYS_RANDOM is True:
+        rand = random.randrange(0, len(RANDOM_RESPONSES))
+        resp = RANDOM_RESPONSES[rand]
+        fd.write(RESPONSES[resp])
+    else:
+        fd.write(RESPONSES['250'])
+    return
 
 def main():
     try:
@@ -99,5 +131,6 @@ if __name__ == "__main__":
     try:
         main()
     except (SystemExit, KeyboardInterrupt):
+        eventlet.StopServe()
         d.stop()
         sys.exit(0)
