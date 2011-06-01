@@ -4,6 +4,16 @@ import socket
 from daemon import Daemon
 
 
+#
+# I am well aware that this code is very nasty
+# but the whole point of this program is a simple
+# configurable and easy way of accepting email
+# without needing to set-up a real SMTP daemon
+# and without all of the disk and system I/O
+# for processing.
+#
+
+
 HOST = "0.0.0.0"
 PORT = 25
 CONCURRENCY = 10000
