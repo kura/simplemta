@@ -29,9 +29,10 @@ __status__ = "Development"
 HOST = "0.0.0.0"
 PORT = 25
 CONCURRENCY = 10000
-ALWAYS_ACCEPT = False
-ALWAYS_BOUNCE = False
-ALWAYS_RANDOM = True
+
+#HANDLE = "ACCEPT"  # always accept
+#HANDLE = "BOUNCE" # always bounce - random code
+HANDLE = "RANDOM"  # randomise response
 
 RESPONSES = {
     "220": "220 2.2.0 Simple(E)SMTP ready and waiting baby!\n",
@@ -108,18 +109,16 @@ def handle_data(fd):
             return
 
 def handle_complete(fd):
-    if ALWAYS_ACCEPT is True:
+    if HANDLE == "ACCEPT":
         fd.write(RESPONSES['250'])
-    elif ALWAYS_BOUNCE is True:
+    elif HANDLE == "BOUNCE":
         rand = random.randrange(0, len(BOUNCE_RESPONSES))
         resp = BOUNCE_RESPONSES[rand]
         fd.write(RESPONSES[resp])
-    elif ALWAYS_RANDOM is True:
+    elif HANDLE == "RANDOM":
         rand = random.randrange(0, len(RANDOM_RESPONSES))
         resp = RANDOM_RESPONSES[rand]
         fd.write(RESPONSES[resp])
-    else:
-        fd.write(RESPONSES['250'])
     return
 
 def main():
