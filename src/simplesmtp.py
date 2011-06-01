@@ -14,36 +14,50 @@ from daemon import Daemon
 #
 
 
+RESPONSES = {
+    "RUNNING": "220 SimpleSMTP ready and waiting baby!\n",
+    'HELO': "250 OK, yo!\n",
+    'MAIL_FROM': "250 OK\n",
+    'RCPT_TO': "250 OK\n",
+    'DATA': "354 send me data bitch!\n",
+    'DOT': "250 OK\n",
+    'RSET': "250 RSET\n",
+    'QUIT': "221 fuck off!\n",
+    'ERROR': "500 wtf?\n",
+}
+
 HOST = "0.0.0.0"
-PORT = 25
+PORT = 8098
 CONCURRENCY = 10000
 
 def handle(sock, addr):
     fd = sock.makefile('rw')
-    fd.write("220 Kura SMTP ready and waiting.\n")
+    fd.write(RESPONSES['RUNNING'])
     fd.flush()
     while True:
         line = fd.readline()
         if not line:
             break
         elif line.startswith("HELO"):
-            fd.write("250 OK, yo!\n")
-        elif line.startswith("MAIL FROM") or line.startswith("RCPT TO"):
-            fd.write("250 OK\n")
+            fd.write(RESPONSES['HELO'])
+        elif line.startswith("MAIL FROM"):
+            fd.write(RESPONSES['MAIL_FROM'])
+        elif line.startswith("RCPT TO"):
+            fd.write(RESPONSES['RCPT_TO'])
         elif line.startswith("DATA"):
             handle_data(fd)
-            fd.write("250 OK\n")
+            fd.write(RESPONSES['DOT'])
         elif line.startswith("RSET"):
-            fd.write("250 REST\n")
+            fd.write(RESPONSES['RSET'])
         elif line.startswith("QUIT"):
-            fd.write("221 fuck off\n")
+            fd.write(RESPONSES['QUIT'])
             return
         else:
-            fd.write("500 wtf?\n")
+            fd.write(RESPONSES['ERROR'])
         fd.flush()
 
 def handle_data(fd):
-    fd.write("354 send me data bitch!\n")
+    fd.write(RESPONSES['DATA'])
     fd.flush()
     while True:
         line = fd.readline()
@@ -63,14 +77,14 @@ def main():
 if __name__ == "__main__":
     d = Daemon("/tmp/ayers-smtpd.pid")
     if sys.argv[1] == "start":
-        print "Starting Kura SMTPD..."
+        print "Starting SimpleSMTPD..."
         d.start()
     elif sys.argv[1] == "restart":
-        print "Restarting Kura SMTPD..."
+        print "Restarting SimpleSMTPD..."
         eventlet.StopServe()
         d.restart()
     else:
-        print "Stopping Kura SMTPD..."
+        print "Stopping SimpleSMTPD..."
         eventlet.StopServe()
         d.stop()
         sys.exit(0)
