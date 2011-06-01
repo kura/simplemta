@@ -64,21 +64,24 @@ def handle(sock, addr):
         if not line:
             break
         elif line.startswith("HELO"):
-            fd.write(RESPONSES['250'])
+            resp = RESPONSES['250']
+        elif line.startswith("EHLO"):
+            resp = RESPONSES['250']
         elif line.startswith("MAIL FROM"):
-            fd.write(RESPONSES['250'])
+            resp = RESPONSES['250']
         elif line.startswith("RCPT TO"):
-            fd.write(RESPONSES['250'])
+            resp = RESPONSES['250']
         elif line.startswith("DATA"):
             handle_data(fd)
             handle_complete(fd)
         elif line.startswith("RSET"):
-            fd.write(RESPONSES['250'])
+            resp = RESPONSES['250']
         elif line.startswith("QUIT"):
-            fd.write(RESPONSES['221'])
+            resp = RESPONSES['221']
             return
         else:
-            fd.write(RESPONSES['500'])
+            resp = RESPONSES['500']
+        fd.write(resp)
         fd.flush()
 
 def handle_data(fd):
@@ -88,8 +91,6 @@ def handle_data(fd):
         line = fd.readline()
         if line[0] == "." and len(line) == 3 and ord(line[0]) == 46:
             return
-        else:
-            fd.write(line)
 
 def handle_complete(fd):
     if ALWAYS_ACCEPT is True:
