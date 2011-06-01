@@ -16,49 +16,56 @@ from daemon import Daemon
 
 
 RESPONSES = {
-    "RUNNING": "220 SimpleSMTP ready and waiting baby!\n",
-    'HELO': "250 OK, yo!\n",
-    'MAIL_FROM': "250 OK\n",
-    'RCPT_TO': "250 OK\n",
-    'DATA': "354 send me data bitch!\n",
-    'DOT': "250 OK\n",
-    'RSET': "250 RSET\n",
-    'QUIT': "221 fuck off!\n",
-    'ERROR': "500 wtf?\n",
+    "220": "220 SimpleSMTP ready and waiting baby!\n",
+    '250': "250 OK, yo!\n",
+    '354': "354 send me data bitch!\n",
+    '221': "221 fuck off!\n",
+    '500': "500 wtf?\n",
+    '421': "421 uh shit... I don't work\n",
+    '450': "450 I couldn't do it =(\n",
+    '451': "451 abort abort abort\n",
+    '501': "501 wrong syntax noob\n",
+    '502': "502 I'm too stupid to know that command\n",
+    '503': "503 incorrect order, does not compute\n",
+    '550': "550 I just can't do it captain, I don't have the power\n",
+    '551': "551 user isn't from around here, you need <>\n",
+    '552': "552 out of space\n",
+    '553': "553 invalid shit\n",
+    '554': "554 transaction failed\n",
 }
 
 HOST = "0.0.0.0"
-PORT = 8098
+PORT = 25
 CONCURRENCY = 10000
 
 def handle(sock, addr):
     fd = sock.makefile('rw')
-    fd.write(RESPONSES['RUNNING'])
+    fd.write(RESPONSES['220'])
     fd.flush()
     while True:
         line = fd.readline()
         if not line:
             break
         elif line.startswith("HELO"):
-            fd.write(RESPONSES['HELO'])
+            fd.write(RESPONSES['250'])
         elif line.startswith("MAIL FROM"):
-            fd.write(RESPONSES['MAIL_FROM'])
+            fd.write(RESPONSES['250'])
         elif line.startswith("RCPT TO"):
-            fd.write(RESPONSES['RCPT_TO'])
+            fd.write(RESPONSES['250'])
         elif line.startswith("DATA"):
             handle_data(fd)
-            fd.write(RESPONSES['DOT'])
+            fd.write(RESPONSES['250'])
         elif line.startswith("RSET"):
-            fd.write(RESPONSES['RSET'])
+            fd.write(RESPONSES['250'])
         elif line.startswith("QUIT"):
-            fd.write(RESPONSES['QUIT'])
+            fd.write(RESPONSES['221'])
             return
         else:
-            fd.write(RESPONSES['ERROR'])
+            fd.write(RESPONSES['500'])
         fd.flush()
 
 def handle_data(fd):
-    fd.write(RESPONSES['DATA'])
+    fd.write(RESPONSES['354'])
     fd.flush()
     while True:
         line = fd.readline()
