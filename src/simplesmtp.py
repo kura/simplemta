@@ -9,7 +9,7 @@ from daemon import Daemon
 
 __author__ = "Kura"
 __copyright__ = "None"
-__credits__ = ["Kura"]
+__credits__ = ["Kura", "Richard Noble"]
 __license__ = "BSD 3-Clause"
 __version__ = "0.1"
 __maintainer__ = "Kura"
