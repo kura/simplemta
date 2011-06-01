@@ -118,10 +118,10 @@ def main():
 if __name__ == "__main__":
     d = Daemon("/tmp/simplesmtpd.pid")
     if sys.argv[1] == "start":
-        print "Starting SimpleSMTPD..."
+        print "Starting SimpleSMTPD %s:%s..." % (HOST, PORT)
         d.start()
     elif sys.argv[1] == "restart":
-        print "Restarting SimpleSMTPD..."
+        print "Restarting SimpleSMTPD %s:%s..." % (HOST, PORT)
         eventlet.StopServe()
         d.restart()
     else:
