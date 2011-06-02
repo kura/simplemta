@@ -7,6 +7,7 @@ import random
 import atexit
 import logging
 from daemon import Daemon
+eventlet.monkey_patch()
 
 
 """
@@ -138,28 +139,31 @@ def handle(sock, addr):
     fd.write(resp)
     fd.flush()
     if DEBUG is True:
-        log.debug("Connect from: %s" % addr[0])
+        log.debug("Connect from %s" % addr[0])
         log.debug(resp.strip("\n"))
     while True:
         line = fd.readline()
         resp = ""
         if not line:
             break
-        elif line.startswith("HELO"):
+        elif line.lower().startswith("helo"):
             resp = RESPONSES['250']
-        elif line.startswith("EHLO"):
+        elif line.lower().startswith("ehlo"):
             resp = RESPONSES['250']
-        elif line.startswith("MAIL FROM"):
+        elif line.lower().startswith("mail from"):
             resp = RESPONSES['250']
-        elif line.startswith("RCPT TO"):
+        elif line.lower().startswith("rcpt to"):
             resp = RESPONSES['250']
-        elif line.startswith("DATA"):
+        elif line.lower().startswith("data"):
             handle_data(fd)
             handle_complete(fd)
-        elif line.startswith("RSET"):
+        elif line.lower().startswith("rset"):
             resp = RESPONSES['250']
-        elif line.startswith("QUIT"):
+        elif line.lower().startswith("quit"):
             resp = RESPONSES['221']
+            if DEBUG is True:
+                log.debug("QUIT")
+                log.debug("Disconnect from %s" % addr[0])
             return
         else:
             resp = RESPONSES['500']
@@ -229,7 +233,7 @@ if __name__ == "__main__":
         eventlet.StopServe()
         d.restart()
     else:
-        log.warn("Stopping SimpleMTA...")
+        log.info("Stopping SimpleMTA...")
         eventlet.StopServe()
         d.stop()
         sys.exit(0)
