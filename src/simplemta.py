@@ -45,17 +45,17 @@ CONCURRENCY = 10000
 
 # How to handle in coming mail
 # ACCEPT, BOUNCE, RANDOM
-# default: RANDOM
-#HANDLE = "ACCEPT"  # always accept
+# default: ACCEPT
+HANDLE = "ACCEPT"  # always accept
 #HANDLE = "BOUNCE" # always bounce - random code
-HANDLE = "RANDOM"  # randomise response
+#HANDLE = "RANDOM"  # randomise response
 
 # Debugging
 # This can really hammer your disk if
 # enabled so use with caution.
 # Best disabled when stress testing
 # default: False
-DEBUG = True
+DEBUG = False
 
 # Location to log to
 # default: /tmp/simplemta.log
