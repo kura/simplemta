@@ -1,6 +1,6 @@
-==========
-SimpleSMTP
-==========
+=========
+SimpleMTA
+=========
 
 Requirements
 ------------
@@ -11,11 +11,11 @@ Requirements
 Usage
 -----
 
-  ./simplesmtp.py start		Starts the server
+  ./simplemta.py start		Starts the server
 
-  ./simplesmtp.py stop		Stops the server
+  ./simplemta.py stop		Stops the server
 
-  ./simplesmtp.py restart	Restarts the server
+  ./simplemta.py restart	Restarts the server
 
 
 Mad props
