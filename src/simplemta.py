@@ -9,6 +9,12 @@ import logging
 from daemon import Daemon
 
 
+"""
+Python & Eventlet powered MTA for accepting, bouncing or randomly doing both to 
+incoming emails without any disk I/O, although no messages actually ever get delivered. 
+Mainly for testing huge send rates
+"""
+
 __author__ = "Kura"
 __copyright__ = "None"
 __credits__ = ["Kura", "Richard Noble"]
