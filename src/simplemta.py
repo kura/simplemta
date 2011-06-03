@@ -4,15 +4,15 @@ import sys
 import eventlet
 import socket
 import random
-import atexit
 import logging
 from daemon import Daemon
 eventlet.monkey_patch()
 
 
 """
-Python & Eventlet powered MTA for accepting, bouncing or randomly doing both to 
-incoming emails without any disk I/O, although no messages actually ever get delivered. 
+Python & Eventlet powered MTA for accepting, bouncing or randomly
+doing both toincoming emails without any disk I/O, although no
+messages actually ever get delivered.
 Mainly for testing huge send rates
 """
 
@@ -104,11 +104,15 @@ RESPONSES = {
 
 # Successful response: 250
 # Random responses
-RANDOM_RESPONSES = ('250', '421', '422', '431', '432', '450', '451', '452', '515', '521', '522',
-                    '523', '531', '533', '534', '547', '550', '551', '552', '553', '554', '571')
+RANDOM_RESPONSES = ('250', '421', '422', '431', '432', '450',
+                    '451', '452', '515', '521', '522', '523',
+                    '531', '533', '534', '547', '550', '551',
+                    '552', '553', '554', '571')
 # Bounce responses
-BOUNCE_RESPONSES = ('421', '422', '431', '432', '450', '451', '452', '515', '521', '522', '523',
-                    '531', '533', '534', '547', '550', '551', '552', '553', '554', '571')
+BOUNCE_RESPONSES = ('421', '422', '431', '432', '450', '451',
+                    '452', '515', '521', '522', '523', '531',
+                    '533', '534', '547', '550', '551', '552',
+                    '553', '554', '571')
 
 LOGGING_LEVEL = logging.INFO
 LOGGING_FORMAT = "%(asctime)s %(message)s"
@@ -127,6 +131,7 @@ file_log.setFormatter(formatter)
 
 log.addHandler(stream)
 log.addHandler(file_log)
+
 
 def handle(sock, addr):
     """
@@ -173,6 +178,7 @@ def handle(sock, addr):
         fd.write(resp)
         fd.flush()
 
+
 def handle_data(fd):
     """
     Worker to handle data sent after DATA
@@ -190,6 +196,7 @@ def handle_data(fd):
             log.debug(line.strip("\n"))
         if line[0] == "." and len(line) == 3 and ord(line[0]) == 46:
             return
+
 
 def handle_complete(fd):
     """
@@ -212,16 +219,19 @@ def handle_complete(fd):
     fd.write(resp)
     return
 
+
 def main():
     """
     Spawns the listener
     """
     try:
-        eventlet.serve(eventlet.listen((HOST, PORT)), handle, concurrency=CONCURRENCY)
+        eventlet.serve(eventlet.listen((HOST, PORT)), handle,
+                       concurrency=CONCURRENCY)
     except socket.error as e:
         log.warn(e)
         eventlet.StopServe()
         sys.exit(0)
+
 
 if __name__ == "__main__":
     d = Daemon("/tmp/simplesmtpd.pid")
