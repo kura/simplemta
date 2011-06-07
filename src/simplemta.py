@@ -151,21 +151,15 @@ def handle(sock, addr):
         resp = ""
         if not line:
             break
-        elif line.lower().startswith("helo"):
-            resp = RESPONSES['250']
-        elif line.lower().startswith("ehlo"):
-            resp = RESPONSES['250']
-        elif line.lower().startswith("mail from"):
-            resp = RESPONSES['250']
-        elif line.lower().startswith("rcpt to"):
-            resp = RESPONSES['250']
+        elif any(line.lower().startswith(e) for e in ['helo', 'ehlo', 
+                                                      'mail from', 
+                                                      'rcpt to', 'rset']):
         elif line.lower().startswith("data"):
             handle_data(fd)
             handle_complete(fd)
-        elif line.lower().startswith("rset"):
-            resp = RESPONSES['250']
         elif line.lower().startswith("quit"):
             resp = RESPONSES['221']
+            fd.write(resp)
             if DEBUG is True:
                 log.debug("QUIT")
                 log.debug("Disconnect from %s" % addr[0])
@@ -234,7 +228,7 @@ def main():
 
 
 if __name__ == "__main__":
-    d = Daemon("/tmp/simplesmtpd.pid")
+    d = Daemon("/tmp/simplemta.pid")
     if sys.argv[1] == "start":
         log.info("Starting SimpleMTA %s:%s..." % (HOST, PORT))
         d.start()
