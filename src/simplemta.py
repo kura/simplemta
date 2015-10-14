@@ -154,6 +154,7 @@ def handle(sock, addr):
         elif any(line.lower().startswith(e) for e in ['helo', 'ehlo', 
                                                       'mail from', 
                                                       'rcpt to', 'rset']):
+            resp = RESPONSES['250']
         elif line.lower().startswith("data"):
             handle_data(fd)
             handle_complete(fd)
